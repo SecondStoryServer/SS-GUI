@@ -1,0 +1,7 @@
+name: SS-GUI
+version: @version@
+api-version: "1.15"
+main: me.syari.ss.gui.Main
+author: sya_ri
+depend:
+  - "SS-Core"
