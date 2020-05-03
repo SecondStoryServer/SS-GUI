@@ -13,8 +13,13 @@ interface Page {
     val icon: Material
     val item: Map<Int, Pair<CustomItemStack, (() -> Unit)?>>
 
-    fun apply(player: Player){
-        fun setItem(slot: Int, item: CustomItemStack){
+    fun setPage(player: Player) {
+        playerPage[UUIDPlayer(player)] = this
+        updateItem(player)
+    }
+
+    private fun updateItem(player: Player) {
+        fun setItem(slot: Int, item: CustomItemStack) {
             player.inventory.setItem(slot, item.toOneItemStack)
         }
 
@@ -27,28 +32,28 @@ interface Page {
         pageList.forEach { (slot, page) ->
             setItem(slot, CustomItemStack.create(page.icon).apply {
                 display = "&6" + page.display
-                if(page == this@Page){
+                if (page == this@Page) {
                     addEnchant(Enchantment.ARROW_INFINITE, 1)
                     addItemFlag(HIDE_ENCHANTS, HIDE_ATTRIBUTES)
                 }
             })
         }
-        playerPage[UUIDPlayer(player)] = this
     }
 
     companion object {
         private val playerPage = mutableMapOf<UUIDPlayer, Page>()
 
         private val pageList = mapOf(
-            9 to ItemPage,
-            10 to StatusPage,
-            18 to PartyPage,
-            19 to GuildPage,
-            20 to FriendPage,
-            21 to OtherPage
+            9 to ItemPage, 10 to StatusPage, 18 to PartyPage, 19 to GuildPage, 20 to FriendPage, 21 to OtherPage
         )
 
-        val firstPage get() = pageList.values.first()
+        private val defaultPage = ItemPage
+
+        private val Player.page get() = playerPage.getOrDefault(UUIDPlayer(this), defaultPage)
+
+        fun updatePageItem(player: Player) {
+            player.page.updateItem(player)
+        }
 
         val separateItem = CustomItemStack.create(Material.GRAY_STAINED_GLASS_PANE, "")
     }
