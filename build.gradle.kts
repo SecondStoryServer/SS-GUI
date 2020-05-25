@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
-    implementation("me.syari.ss.core:SS-Core:2.7")
+    implementation("me.syari.ss.core:SS-Core:2.8")
     implementation("me.syari.ss.item:SS-Item:1.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
@@ -28,7 +28,7 @@ bukkit {
     version = project.version.toString()
     main = "$group.Main"
     author = "sya_ri"
-    depend = listOf("SS-Core")
+    depend = listOf("SS-Core", "SS-Item")
     apiVersion = "1.15"
 }
 
