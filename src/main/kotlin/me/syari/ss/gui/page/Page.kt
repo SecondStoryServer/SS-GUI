@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS
 interface Page {
     val display: String
     val icon: Material
-    val item: Map<Int, Pair<CustomItemStack, (() -> Unit)?>>
+    fun getItem(player: Player): Map<Int, Pair<CustomItemStack, (() -> Unit)?>>
 
     fun setPage(player: Player) {
         playerPage[UUIDPlayer(player)] = this
@@ -23,7 +23,7 @@ interface Page {
             player.inventory.setItem(slot, item.toOneItemStack)
         }
 
-        item.forEach { (slot, pair) ->
+        getItem(player).forEach { (slot, pair) ->
             setItem(slot, pair.first)
         }
         listOf(11, 20, 29).forEach { slot ->
