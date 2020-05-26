@@ -236,7 +236,7 @@ object ItemPage: Page {
                 if (has) {
                     item(index, compassItem.itemStack)
                 } else {
-                    item(index, Material.BARRIER, "&c&k${compassItem.display.replace("\\S?", "?")}")
+                    item(index, Material.BARRIER, "&c&k${compassItem.display.replace("\\S+?", "?")}")
                 }
                 index++
             }
