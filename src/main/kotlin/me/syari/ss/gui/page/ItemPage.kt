@@ -214,7 +214,32 @@ object ItemPage: Page {
     }
 
     private fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
+        val displayMode = compassChest.displayMode
+        val isBoth = displayMode == ItemChest.Compass.DisplayMode.Both
+        val isOnlyHave = displayMode == ItemChest.Compass.DisplayMode.OnlyHave
         val itemList = compassChest.getList(page)
-
+        inventory("&9&lコンパス", 6) {
+            item(0..6, Material.GRAY_STAINED_GLASS_PANE)
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6未所持/所持", shine = isBoth).event {
+                if (isBoth) return@event
+                compassChest.displayMode = ItemChest.Compass.DisplayMode.Both
+                openCompassChest(player, compassChest, page)
+            }
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6所持", shine = isOnlyHave).event {
+                if (isOnlyHave) return@event
+                compassChest.displayMode = ItemChest.Compass.DisplayMode.OnlyHave
+                openCompassChest(player, compassChest, page)
+            }
+            item(9..17, Material.BLACK_STAINED_GLASS_PANE)
+            var index = 18
+            itemList?.forEach { compassItem, has ->
+                if (has) {
+                    item(index, compassItem.itemStack)
+                }
+                index++
+            }
+            item(45..52, Material.BLACK_STAINED_GLASS_PANE)
+            open(player)
+        }
     }
 }
