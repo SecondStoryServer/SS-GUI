@@ -134,7 +134,7 @@ object ItemPage: Page {
         }
     }
 
-    data class SelectableEquipItem(val item: EnhancedEquipItem) {
+    private data class SelectableEquipItem(val item: EnhancedEquipItem) {
         var isSelected = false
     }
 
@@ -235,6 +235,8 @@ object ItemPage: Page {
             itemList?.forEach { compassItem, has ->
                 if (has) {
                     item(index, compassItem.itemStack)
+                } else {
+                    item(index, Material.BARRIER, "&c&k${compassItem.display.replace("\\S+?", "?")}")
                 }
                 index++
             }
