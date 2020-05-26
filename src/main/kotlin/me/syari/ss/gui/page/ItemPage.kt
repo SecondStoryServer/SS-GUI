@@ -7,6 +7,7 @@ import me.syari.ss.core.scheduler.CustomScheduler.runLater
 import me.syari.ss.gui.Main.Companion.guiPlugin
 import me.syari.ss.item.chest.ItemChest
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
+import me.syari.ss.item.equip.EnhancedEquipItem
 import me.syari.ss.item.general.GeneralItemWithAmount
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -58,7 +59,7 @@ object ItemPage: Page {
         val itemList = generalChest.getList(page)?.map { SelectableGeneralItem(it) }
         var confirmDump = false
         var protectDump = false
-        inventory("&9&l通常アイテム", 6) {
+        inventory("&9&l通常", 6) {
             fun CustomInventory.updateItemList() {
                 val selectList = mutableListOf<String>()
                 itemList?.forEachIndexed { index, generalItem ->
@@ -117,12 +118,12 @@ object ItemPage: Page {
             }
 
             item(0..6, Material.GRAY_STAINED_GLASS_PANE)
-            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&6種類並び替え", shine = isType).event {
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = isType).event {
                 if (isType) return@event
                 generalChest.sortType = ItemChest.General.SortType.Type
                 openGeneralChest(player, generalChest, page)
             }
-            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&6レア度並び替え", shine = isRarity).event {
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = isRarity).event {
                 if (isRarity) return@event
                 generalChest.sortType = ItemChest.General.SortType.Rarity
                 openGeneralChest(player, generalChest, page)
@@ -133,10 +134,83 @@ object ItemPage: Page {
         }
     }
 
+    data class SelectableEquipItem(val item: EnhancedEquipItem) {
+        var isSelected = false
+    }
+
     private fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
         if (!equipChest.isSorted) equipChest.sort()
-        val itemList = equipChest.getList(page)
+        val sortType = equipChest.sortType
+        val isType = sortType == ItemChest.Equip.SortType.Type
+        val isEnhance = sortType == ItemChest.Equip.SortType.Enhance
+        val isRarity = sortType == ItemChest.Equip.SortType.Rarity
+        val isStatus = sortType == ItemChest.Equip.SortType.Status
+        val itemList = equipChest.getList(page)?.map { SelectableEquipItem(it) }
+        var confirmDump = false
+        var protectDump = false
+        inventory("&9&l装備", 6) {
+            fun CustomInventory.updateItemList() {
+                val selectList = mutableListOf<String>()
+                itemList?.forEachIndexed { index, equipItem ->
+                    item(18 + index, equipItem.item.itemStack.apply {
+                        if (equipItem.isSelected) {
+                            addEnchant(Enchantment.DURABILITY, 0)
+                            addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                        }
+                    })
+                }
+                val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
+                item(53, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
+                    if (protectDump) return@event
+                    if (confirmDump) {
+                        itemList?.forEach { equipItem ->
+                            equipChest.remove(equipItem.item)
+                            equipItem.isSelected = false
+                        }
+                        openEquipChest(player, equipChest, page)
+                    } else {
+                        confirmDump = true
+                        updateItemList()
+                        runLater(guiPlugin, 100) {
+                            if (confirmDump) {
+                                confirmDump = false
+                                updateItemList()
+                            }
+                        }
+                    }
+                    protectDump = true
+                    runLater(guiPlugin, 20) {
+                        protectDump = false
+                    }
+                }
+                open(player)
+            }
 
+            item(4, material = Material.GRAY_STAINED_GLASS_PANE)
+            item(5, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = isType).event {
+                if (isType) return@event
+                equipChest.sortType = ItemChest.Equip.SortType.Type
+                openEquipChest(player, equipChest, page)
+            }
+            item(6, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6エンハンス", shine = isEnhance).event {
+                if (isEnhance) return@event
+                equipChest.sortType = ItemChest.Equip.SortType.Enhance
+                openEquipChest(player, equipChest, page)
+            }
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = isRarity).event {
+                if (isRarity) return@event
+                equipChest.sortType = ItemChest.Equip.SortType.Rarity
+                openEquipChest(player, equipChest, page)
+            }
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6攻撃・防御", shine = isStatus).event {
+                if (isStatus) return@event
+                equipChest.sortType = ItemChest.Equip.SortType.Status
+                openEquipChest(player, equipChest, page)
+            }
+            item(9..17, Material.BLACK_STAINED_GLASS_PANE)
+            item(45..52, Material.BLACK_STAINED_GLASS_PANE)
+            updateItemList()
+        }
     }
 
     private fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
