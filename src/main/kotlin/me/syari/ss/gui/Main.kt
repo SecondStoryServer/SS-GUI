@@ -1,5 +1,6 @@
 package me.syari.ss.gui
 
+import me.syari.ss.battle.equipment.ElementType
 import me.syari.ss.core.auto.Event
 import me.syari.ss.core.command.create.CreateCommand.createCommand
 import me.syari.ss.core.command.create.CreateCommand.element
@@ -8,8 +9,15 @@ import me.syari.ss.core.command.create.ErrorMessage
 import me.syari.ss.gui.page.ItemPage.openCompassChest
 import me.syari.ss.gui.page.ItemPage.openEquipChest
 import me.syari.ss.gui.page.ItemPage.openGeneralChest
+import me.syari.ss.item.ItemRarity
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
+import me.syari.ss.item.compass.CompassItem
+import me.syari.ss.item.equip.EnhancedEquipItem
+import me.syari.ss.item.equip.weapon.WeaponItem
+import me.syari.ss.item.equip.weapon.WeaponType
 import me.syari.ss.item.general.potion.HealPotion
+import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -25,6 +33,39 @@ class Main: JavaPlugin() {
     }
 
     private fun test() {
+        val testSword = WeaponItem.create(
+            WeaponType.Sword,
+            "test-sword",
+            Material.IRON_SWORD,
+            "&atest-sword",
+            "テスト用",
+            ItemRarity.Rare,
+            ElementType.Wood,
+            2F,
+            0.5F,
+            2F
+        )
+        testSword.register()
+        val testWand = WeaponItem.create(
+            WeaponType.Wand,
+            "test-wand",
+            Material.WOODEN_HOE,
+            "&dtest-wand",
+            "テスト用",
+            ItemRarity.UltraRare,
+            ElementType.Dark,
+            10F,
+            0F,
+            3F
+        )
+        testWand.register()
+        val nullLocation = Location(null, 0.0, 0.0, 0.0)
+        val compassItem1 = CompassItem("compass-1", "コンパス１", nullLocation)
+        val compassItem2 = CompassItem("compass-2", "コンパス２", nullLocation)
+        val compassItem3 = CompassItem("compass-3", "コンパス３", nullLocation)
+        compassItem1.register()
+        compassItem2.register()
+        compassItem3.register()
         createCommand(this,
             "test-gui",
             "SS-GUI-Test",
@@ -38,6 +79,14 @@ class Main: JavaPlugin() {
                     HealPotion.Size.values().forEachIndexed { index, size ->
                         chestData.general.add(HealPotion(size), index * 10 + 5)
                     }
+                    chestData.equip.add(EnhancedEquipItem(testSword, 50))
+                    chestData.equip.add(EnhancedEquipItem(testSword, 50))
+                    chestData.equip.add(EnhancedEquipItem(testSword, 30))
+                    chestData.equip.add(EnhancedEquipItem(testWand, 100))
+                    chestData.equip.add(EnhancedEquipItem(testWand, 70))
+                    chestData.equip.add(EnhancedEquipItem(testWand, 20))
+                    chestData.compass.add(compassItem1)
+                    chestData.compass.add(compassItem3)
                 }
                 "open" -> {
                     sendWithPrefix("open")
