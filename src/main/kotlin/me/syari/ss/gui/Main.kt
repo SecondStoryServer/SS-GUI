@@ -12,7 +12,7 @@ import me.syari.ss.gui.page.ItemPage.openGeneralChest
 import me.syari.ss.item.ItemRarity
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
 import me.syari.ss.item.compass.CompassItem
-import me.syari.ss.item.equip.EnhancedEquipItem
+import me.syari.ss.item.equip.weapon.EnhancedWeaponItem
 import me.syari.ss.item.equip.weapon.WeaponItem
 import me.syari.ss.item.equip.weapon.WeaponType
 import me.syari.ss.item.general.potion.HealPotion
@@ -79,12 +79,12 @@ class Main: JavaPlugin() {
                     HealPotion.Size.values().forEachIndexed { index, size ->
                         chestData.general.add(HealPotion(size), index * 10 + 5)
                     }
-                    chestData.equip.add(EnhancedEquipItem(testSword, 50))
-                    chestData.equip.add(EnhancedEquipItem(testSword, 50))
-                    chestData.equip.add(EnhancedEquipItem(testSword, 30))
-                    chestData.equip.add(EnhancedEquipItem(testWand, 100))
-                    chestData.equip.add(EnhancedEquipItem(testWand, 70))
-                    chestData.equip.add(EnhancedEquipItem(testWand, 20))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, 30))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, 100))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, 70))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, 20))
                     chestData.compass.add(compassItem1)
                     chestData.compass.add(compassItem3)
                 }

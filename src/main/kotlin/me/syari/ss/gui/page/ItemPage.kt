@@ -1,5 +1,6 @@
 package me.syari.ss.gui.page
 
+import me.syari.ss.core.code.StringEditor.toUncolor
 import me.syari.ss.core.inventory.CreateInventory.inventory
 import me.syari.ss.core.inventory.CustomInventory
 import me.syari.ss.core.item.CustomItemStack
@@ -236,7 +237,7 @@ object ItemPage: Page {
                 if (has) {
                     item(index, compassItem.itemStack)
                 } else {
-                    item(index, Material.BARRIER, "&c&k${compassItem.display.replace("\\S+?", "?")}")
+                    item(index, Material.BARRIER, "&c&k${compassItem.display.toUncolor.replace("\\S+?", "?")}")
                 }
                 index++
             }
