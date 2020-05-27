@@ -13,48 +13,59 @@ interface Page {
     val icon: Material
     fun getItem(player: Player): Map<Int, Pair<CustomItemStack, (() -> Unit)?>>
 
-    fun setPage(player: Player) {
-        playerPage[UUIDPlayer(player)] = this
-        updateItem(player)
-    }
-
-    private fun updateItem(player: Player) {
-        fun setItem(slot: Int, item: CustomItemStack) {
-            player.inventory.setItem(slot, item.toOneItemStack)
-        }
-
-        getItem(player).forEach { (slot, pair) ->
-            setItem(slot, pair.first)
-        }
-        listOf(11, 20, 29).forEach { slot ->
-            setItem(slot, separateItem)
-        }
-        pageList.forEach { (slot, page) ->
-            setItem(slot, CustomItemStack.create(page.icon).apply {
-                display = "&6" + page.display
-                if (page == this@Page) {
-                    addEnchant(Enchantment.ARROW_INFINITE, 1)
-                    addItemFlag(HIDE_ENCHANTS, HIDE_ATTRIBUTES)
-                }
-            })
-        }
-    }
-
     companion object {
-        private val playerPage = mutableMapOf<UUIDPlayer, Page>()
+        data class PlayerPageData(val uuidPlayer: UUIDPlayer) {
+            private var page: Page = ItemPage
+            private var clickEvent = mapOf<Int, () -> Unit>()
+
+            fun updateItem(player: Player) {
+                val clickEvent = mutableMapOf<Int, () -> Unit>()
+
+                fun setItem(slot: Int, item: CustomItemStack, event: (() -> Unit)?) {
+                    player.inventory.setItem(slot, item.toOneItemStack)
+                    if (event != null) {
+                        clickEvent[slot] = event
+                    }
+                }
+
+                page.getItem(player).forEach { (slot, pair) ->
+                    setItem(slot, pair.first, pair.second)
+                }
+                val separateItem = CustomItemStack.create(Material.GRAY_STAINED_GLASS_PANE)
+                listOf(11, 20, 29).forEach { slot ->
+                    setItem(slot, separateItem, null)
+                }
+                pageList.forEach { (slot, page) ->
+                    setItem(slot, CustomItemStack.create(page.icon).apply {
+                        display = "&6" + page.display
+                        if (page == this@PlayerPageData.page) {
+                            addEnchant(Enchantment.ARROW_INFINITE, 1)
+                            addItemFlag(HIDE_ENCHANTS, HIDE_ATTRIBUTES)
+                        }
+                    }) {
+                        this.page = page
+                        updateItem(player)
+                    }
+                }
+
+                this.clickEvent = clickEvent
+            }
+
+            fun runClickEvent(slot: Int) {
+                clickEvent[slot]?.invoke()
+            }
+        }
+
+        private val playerPage = mutableMapOf<UUIDPlayer, PlayerPageData>()
 
         private val pageList = mapOf(
-            9 to ItemPage, 10 to StatusPage, 18 to PartyPage, 19 to GuildPage, 20 to FriendPage, 21 to OtherPage
+            9 to ItemPage, 10 to StatusPage, 18 to PartyPage, 19 to GuildPage, 27 to FriendPage, 28 to OtherPage
         )
 
-        private val defaultPage = ItemPage
+        val Player.page
+            get() = UUIDPlayer(this).page
 
-        private val Player.page get() = playerPage.getOrDefault(UUIDPlayer(this), defaultPage)
-
-        fun updatePageItem(player: Player) {
-            player.page.updateItem(player)
-        }
-
-        val separateItem = CustomItemStack.create(Material.GRAY_STAINED_GLASS_PANE, "")
+        private val UUIDPlayer.page
+            get() = playerPage.getOrPut(this) { PlayerPageData(this) }
     }
 }
