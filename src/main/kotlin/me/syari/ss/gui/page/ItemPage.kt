@@ -240,7 +240,7 @@ object ItemPage: Page {
                 }
                 index++
             }
-            item(45..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(45..53, Material.BLACK_STAINED_GLASS_PANE)
             open(player)
         }
     }
