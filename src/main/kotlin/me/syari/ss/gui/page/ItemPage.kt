@@ -51,7 +51,7 @@ object ItemPage: Page {
             }
     }
 
-    private fun openGeneralChest(player: Player, generalChest: ItemChest.General, page: Int) {
+    /* private */ fun openGeneralChest(player: Player, generalChest: ItemChest.General, page: Int) {
         if (!generalChest.isSorted) generalChest.sort()
         val sortType = generalChest.sortType
         val isType = sortType == ItemChest.General.SortType.Type
@@ -138,7 +138,7 @@ object ItemPage: Page {
         var isSelected = false
     }
 
-    private fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
+    /* private */ fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
         if (!equipChest.isSorted) equipChest.sort()
         val sortType = equipChest.sortType
         val isType = sortType == ItemChest.Equip.SortType.Type
@@ -213,7 +213,7 @@ object ItemPage: Page {
         }
     }
 
-    private fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
+    /* private */ fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
         val displayMode = compassChest.displayMode
         val isBoth = displayMode == ItemChest.Compass.DisplayMode.Both
         val isOnlyHave = displayMode == ItemChest.Compass.DisplayMode.OnlyHave
