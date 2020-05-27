@@ -55,9 +55,8 @@ object ItemPage: Page {
     /* private */ fun openGeneralChest(player: Player, generalChest: ItemChest.General, page: Int) {
         if (!generalChest.isSorted) generalChest.sort()
         val sortType = generalChest.sortType
-        val isType = sortType == ItemChest.General.SortType.Type
-        val isRarity = sortType == ItemChest.General.SortType.Rarity
         val itemList = generalChest.getList(page)?.map { SelectableGeneralItem(it) }
+        val isReverse = generalChest.isReverse
         var confirmDump = false
         var protectDump = false
         inventory("&9&l通常", 6) {
@@ -119,16 +118,23 @@ object ItemPage: Page {
             }
 
             item(0..6, Material.GRAY_STAINED_GLASS_PANE)
-            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = isType).event {
-                if (isType) return@event
-                generalChest.sortType = ItemChest.General.SortType.Type
+
+            fun changeSort(changeTo: ItemChest.General.SortType) {
+                if (sortType == changeTo) {
+                    generalChest.isReverse = !isReverse
+                } else {
+                    generalChest.sortType = changeTo
+                }
                 openGeneralChest(player, generalChest, page)
             }
-            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = isRarity).event {
-                if (isRarity) return@event
-                generalChest.sortType = ItemChest.General.SortType.Rarity
-                openGeneralChest(player, generalChest, page)
+
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = sortType.isType).event {
+                changeSort(ItemChest.General.SortType.Type)
             }
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = sortType.isRarity).event {
+                changeSort(ItemChest.General.SortType.Rarity)
+            }
+
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
             item(45..52, Material.BLACK_STAINED_GLASS_PANE)
             updateItemList()
@@ -142,10 +148,7 @@ object ItemPage: Page {
     /* private */ fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
         if (!equipChest.isSorted) equipChest.sort()
         val sortType = equipChest.sortType
-        val isType = sortType == ItemChest.Equip.SortType.Type
-        val isEnhance = sortType == ItemChest.Equip.SortType.Enhance
-        val isRarity = sortType == ItemChest.Equip.SortType.Rarity
-        val isStatus = sortType == ItemChest.Equip.SortType.Status
+        val isReverse = equipChest.isReverse
         val itemList = equipChest.getList(page)?.map { SelectableEquipItem(it) }
         var confirmDump = false
         var protectDump = false
@@ -188,26 +191,29 @@ object ItemPage: Page {
             }
 
             item(4, material = Material.GRAY_STAINED_GLASS_PANE)
-            item(5, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = isType).event {
-                if (isType) return@event
-                equipChest.sortType = ItemChest.Equip.SortType.Type
+
+            fun changeSort(changeTo: ItemChest.Equip.SortType) {
+                if (sortType == changeTo) {
+                    equipChest.isReverse = !isReverse
+                } else {
+                    equipChest.sortType = changeTo
+                }
                 openEquipChest(player, equipChest, page)
             }
-            item(6, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6エンハンス", shine = isEnhance).event {
-                if (isEnhance) return@event
-                equipChest.sortType = ItemChest.Equip.SortType.Enhance
-                openEquipChest(player, equipChest, page)
+
+            item(5, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6種類", shine = sortType.isType).event {
+                changeSort(ItemChest.Equip.SortType.Type)
             }
-            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = isRarity).event {
-                if (isRarity) return@event
-                equipChest.sortType = ItemChest.Equip.SortType.Rarity
-                openEquipChest(player, equipChest, page)
+            item(6, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6エンハンス", shine = sortType.isEnhance).event {
+                changeSort(ItemChest.Equip.SortType.Enhance)
             }
-            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6攻撃・防御", shine = isStatus).event {
-                if (isStatus) return@event
-                equipChest.sortType = ItemChest.Equip.SortType.Status
-                openEquipChest(player, equipChest, page)
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6レア度", shine = sortType.isRarity).event {
+                changeSort(ItemChest.Equip.SortType.Rarity)
             }
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7並び替え &6攻撃・防御", shine = sortType.isStatus).event {
+                changeSort(ItemChest.Equip.SortType.Status)
+            }
+
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
             item(45..52, Material.BLACK_STAINED_GLASS_PANE)
             updateItemList()
@@ -216,21 +222,24 @@ object ItemPage: Page {
 
     /* private */ fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
         val displayMode = compassChest.displayMode
-        val isBoth = displayMode == ItemChest.Compass.DisplayMode.Both
-        val isOnlyHave = displayMode == ItemChest.Compass.DisplayMode.OnlyHave
         val itemList = compassChest.getList(page)
         inventory("&9&lコンパス", 6) {
             item(0..6, Material.GRAY_STAINED_GLASS_PANE)
-            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6未所持/所持", shine = isBoth).event {
-                if (isBoth) return@event
-                compassChest.displayMode = ItemChest.Compass.DisplayMode.Both
+
+            fun changeDisplay(changeTo: ItemChest.Compass.DisplayMode) {
+                if (displayMode != changeTo) {
+                    compassChest.displayMode = changeTo
+                }
                 openCompassChest(player, compassChest, page)
             }
-            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6所持", shine = isOnlyHave).event {
-                if (isOnlyHave) return@event
-                compassChest.displayMode = ItemChest.Compass.DisplayMode.OnlyHave
-                openCompassChest(player, compassChest, page)
+
+            item(7, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6未所持/所持", shine = displayMode.isBoth).event {
+                changeDisplay(ItemChest.Compass.DisplayMode.Both)
             }
+            item(8, Material.YELLOW_STAINED_GLASS_PANE, "&7表示 &6所持", shine = displayMode.isOnlyHave).event {
+                changeDisplay(ItemChest.Compass.DisplayMode.OnlyHave)
+            }
+
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
             var index = 18
             itemList?.forEach { compassItem, has ->
