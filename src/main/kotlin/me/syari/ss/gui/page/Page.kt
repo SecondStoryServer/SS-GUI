@@ -22,12 +22,17 @@ interface Page {
                 val clickEvent = mutableMapOf<Int, () -> Unit>()
                 val emptySlot = (9..35).toMutableSet()
 
-                fun setItem(slot: Int, item: CustomItemStack, event: (() -> Unit)?) {
-                    player.inventory.setItem(slot, item.toOneItemStack)
-                    if (event != null) {
-                        clickEvent[slot] = event
+                fun setItem(slot: Int, item: CustomItemStack?, event: (() -> Unit)?) {
+                    val itemStack = if (item != null) {
+                        if (event != null) {
+                            clickEvent[slot] = event
+                        }
+                        emptySlot.remove(slot)
+                        item.toOneItemStack
+                    } else {
+                        null
                     }
-                    emptySlot.remove(slot)
+                    player.inventory.setItem(slot, itemStack)
                 }
 
                 page.getItem(player).forEach { (slot, pair) ->
@@ -50,7 +55,7 @@ interface Page {
                     }
                 }
                 emptySlot.forEach { slot ->
-                    player.inventory.setItem(slot, null)
+                    setItem(slot, null, null)
                 }
 
                 this.clickEvent = clickEvent
