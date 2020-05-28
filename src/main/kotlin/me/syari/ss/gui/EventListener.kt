@@ -2,7 +2,7 @@ package me.syari.ss.gui
 
 import me.syari.ss.core.auto.Event
 import me.syari.ss.gui.page.Page.Companion.page
-import me.syari.ss.gui.vanilla.VanillaInventory
+import me.syari.ss.item.vanilla.VanillaInventory
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
