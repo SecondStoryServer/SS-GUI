@@ -53,6 +53,8 @@ object ItemPage: Page {
     }
 
     /* private */ fun openGeneralChest(player: Player, generalChest: ItemChest.General, page: Int) {
+        val maxPage = generalChest.maxPage
+        if (page !in 1..maxPage) return
         if (!generalChest.isSorted) generalChest.sort()
         val sortType = generalChest.sortType
         val itemList = generalChest.getList(page)?.map { SelectableGeneralItem(it) }
@@ -91,7 +93,7 @@ object ItemPage: Page {
                     }
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
-                item(53, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
+                item(49, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
                     if (protectDump) return@event
                     if (confirmDump) {
                         itemList?.forEach { generalItem ->
@@ -136,7 +138,14 @@ object ItemPage: Page {
             }
 
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
-            item(45..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(45, Material.ARROW, "&6<<<").event {
+                openGeneralChest(player, generalChest, page - 1)
+            }
+            item(46..48, Material.BLACK_STAINED_GLASS_PANE)
+            item(50..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(53, Material.ARROW, "&6>>>").event {
+                openGeneralChest(player, generalChest, page + 1)
+            }
             updateItemList()
         }
     }
@@ -146,6 +155,8 @@ object ItemPage: Page {
     }
 
     /* private */ fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
+        val maxPage = equipChest.maxPage
+        if (page !in 1..maxPage) return
         if (!equipChest.isSorted) equipChest.sort()
         val sortType = equipChest.sortType
         val isReverse = equipChest.isReverse
@@ -164,7 +175,7 @@ object ItemPage: Page {
                     })
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
-                item(53, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
+                item(49, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
                     if (protectDump) return@event
                     if (confirmDump) {
                         itemList?.forEach { equipItem ->
@@ -215,12 +226,21 @@ object ItemPage: Page {
             }
 
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
-            item(45..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(45, Material.ARROW, "&6<<<").event {
+                openEquipChest(player, equipChest, page - 1)
+            }
+            item(46..48, Material.BLACK_STAINED_GLASS_PANE)
+            item(50..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(53, Material.ARROW, "&6>>>").event {
+                openEquipChest(player, equipChest, page + 1)
+            }
             updateItemList()
         }
     }
 
     /* private */ fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
+        val maxPage = compassChest.maxPage
+        if (page !in 1..maxPage) return
         val displayMode = compassChest.displayMode
         val itemList = compassChest.getList(page)
         inventory("&9&lコンパス", 6) {
@@ -247,14 +267,18 @@ object ItemPage: Page {
                     item(index, compassItem.itemStack)
                 } else {
                     item(
-                        index,
-                        Material.BARRIER,
-                        "&c&k${compassItem.display.toUncolor.replace("\\S+?".toRegex(), "?")}"
+                        index, Material.BARRIER, "&c&k${compassItem.display.toUncolor.replace("\\S+?".toRegex(), "?")}"
                     )
                 }
                 index++
             }
-            item(45..53, Material.BLACK_STAINED_GLASS_PANE)
+            item(45, Material.ARROW, "&6<<<").event {
+                openCompassChest(player, compassChest, page - 1)
+            }
+            item(46..52, Material.BLACK_STAINED_GLASS_PANE)
+            item(53, Material.ARROW, "&6>>>").event {
+                openCompassChest(player, compassChest, page + 1)
+            }
             open(player)
         }
     }
