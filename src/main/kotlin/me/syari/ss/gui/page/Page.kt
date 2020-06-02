@@ -42,13 +42,24 @@ interface Page {
                     player.inventory.setItem(slot, itemStack)
                 }
 
+                //  9, 10
+                // 18, 19
+                // 27, 28
                 page.getItem(player).forEach { (slot, pair) ->
                     setItem(slot, pair.first, pair.second)
                 }
+
+                // xx, xx, 11
+                // xx, xx, 20
+                // xx, xx, 29
                 val separateItem = CustomItemStack.create(Material.GRAY_STAINED_GLASS_PANE)
                 listOf(11, 20, 29).forEach { slot ->
                     setItem(slot, separateItem, null)
                 }
+
+                // xx, xx, xx, 12 ~ 17
+                // xx, xx, xx, 21 ~ 26
+                // xx, xx, xx, 30 ~ 35
                 pageList.forEach { (slot, page) ->
                     setItem(slot, CustomItemStack.create(page.icon).apply {
                         display = "&6" + page.display
@@ -60,15 +71,20 @@ interface Page {
                         updatePage(player, page)
                     }
                 }
+
+                // HotBar: 0 ~ 8  /  OffHand: 40
                 val itemHolder = player.itemHolder
                 itemHolder.allNormalItem.forEach { (slot, item) ->
                     setItem(slot, item.itemStack, null)
                 }
+
+                // Armor: 36 ~ 39
                 itemHolder.allArmorItem.forEach { (armorSlot, item) ->
                     setItem(armorSlot.slot, item.itemStack) {
                         updatePage(player, StatusPage)
                     }
                 }
+
                 emptySlot.forEach { slot ->
                     setItem(slot, null, null)
                 }
