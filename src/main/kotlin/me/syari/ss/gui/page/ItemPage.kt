@@ -8,8 +8,8 @@ import me.syari.ss.core.scheduler.CustomScheduler.runLater
 import me.syari.ss.gui.Main.Companion.guiPlugin
 import me.syari.ss.item.chest.ItemChest
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
-import me.syari.ss.item.equip.EnhancedEquipItem
-import me.syari.ss.item.general.GeneralItemWithAmount
+import me.syari.ss.item.itemRegister.equip.EnhancedEquipItem
+import me.syari.ss.item.itemRegister.general.GeneralItemWithAmount
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player

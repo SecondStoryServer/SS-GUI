@@ -11,11 +11,11 @@ import me.syari.ss.gui.page.ItemPage.openEquipChest
 import me.syari.ss.gui.page.ItemPage.openGeneralChest
 import me.syari.ss.item.ItemRarity
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
-import me.syari.ss.item.compass.CompassItem
-import me.syari.ss.item.equip.weapon.EnhancedWeaponItem
-import me.syari.ss.item.equip.weapon.WeaponItem
-import me.syari.ss.item.equip.weapon.WeaponType
-import me.syari.ss.item.general.potion.HealPotion
+import me.syari.ss.item.itemRegister.compass.CompassItem
+import me.syari.ss.item.itemRegister.equip.weapon.EnhancedWeaponItem
+import me.syari.ss.item.itemRegister.equip.weapon.WeaponItem
+import me.syari.ss.item.itemRegister.equip.weapon.WeaponType
+import me.syari.ss.item.itemRegister.general.potion.HealPotion
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -79,12 +79,12 @@ class Main: JavaPlugin() {
                     HealPotion.Size.values().forEachIndexed { index, size ->
                         chestData.general.add(HealPotion(size), index * 10 + 5)
                     }
-                    chestData.equip.add(EnhancedWeaponItem(testSword, 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, 30))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, 100))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, 70))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, 20))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 30))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 100))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 70))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 20))
                     chestData.compass.add(compassItem1)
                     chestData.compass.add(compassItem3)
                 }
