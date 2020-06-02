@@ -2,6 +2,7 @@ package me.syari.ss.gui.page
 
 import me.syari.ss.core.item.CustomItemStack
 import me.syari.ss.core.player.UUIDPlayer
+import me.syari.ss.item.holder.ItemHolder.Companion.itemHolder
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -18,9 +19,15 @@ interface Page {
             private var page: Page = ItemPage
             private var clickEvent = mapOf<Int, () -> Unit>()
 
+            private fun updatePage(player: Player, page: Page) {
+                if (this.page == page) return
+                this.page = page
+                updateItem(player)
+            }
+
             fun updateItem(player: Player) {
                 val clickEvent = mutableMapOf<Int, () -> Unit>()
-                val emptySlot = (9..35).toMutableSet()
+                val emptySlot = (0..40).toMutableSet()
 
                 fun setItem(slot: Int, item: CustomItemStack?, event: (() -> Unit)?) {
                     val itemStack = if (item != null) {
@@ -50,8 +57,16 @@ interface Page {
                             addItemFlag(HIDE_ENCHANTS, HIDE_ATTRIBUTES)
                         }
                     }) {
-                        this.page = page
-                        updateItem(player)
+                        updatePage(player, page)
+                    }
+                }
+                val itemHolder = player.itemHolder
+                itemHolder.allNormalItem.forEach { (slot, item) ->
+                    setItem(slot, item.itemStack, null)
+                }
+                itemHolder.allArmorItem.forEach { (armorSlot, item) ->
+                    setItem(armorSlot.slot, item.itemStack) {
+                        updatePage(player, StatusPage)
                     }
                 }
                 emptySlot.forEach { slot ->
