@@ -201,7 +201,7 @@ object ItemPage: Page {
                 open(player)
             }
 
-            item(4, material = Material.GRAY_STAINED_GLASS_PANE)
+            item(0..4, Material.GRAY_STAINED_GLASS_PANE)
 
             fun changeSort(changeTo: ItemChest.Equip.SortType) {
                 if (sortType == changeTo) {
