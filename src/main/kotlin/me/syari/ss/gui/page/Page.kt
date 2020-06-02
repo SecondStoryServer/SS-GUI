@@ -52,7 +52,7 @@ interface Page {
                 // xx, xx, 11
                 // xx, xx, 20
                 // xx, xx, 29
-                val separateItem = CustomItemStack.create(Material.GRAY_STAINED_GLASS_PANE)
+                val separateItem = CustomItemStack.create(Material.BLACK_STAINED_GLASS_PANE)
                 listOf(11, 20, 29).forEach { slot ->
                     setItem(slot, separateItem, null)
                 }
