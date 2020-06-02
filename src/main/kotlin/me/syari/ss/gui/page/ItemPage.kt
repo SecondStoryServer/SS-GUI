@@ -199,12 +199,14 @@ object ItemPage: Page {
                         val changeArmor = { armorSlot: ItemHolder.ArmorSlot ->
                             if (overrideClickEventSlot == armorSlot && overrideClickEvent != null) {
                                 overrideClickEvent = null
+                                updateItemList()
                             } else {
                                 overrideClickEventSlot = armorSlot
                                 overrideClickEvent = {
                                     if (it is EnhancedArmorItem && armorSlot.isAvailable(it.data)) {
                                         itemHolder.setArmorItem(armorSlot, it)
                                         overrideClickEvent = null
+                                        updateItemList()
                                     } else {
                                         player.action("&c&l装備できないアイテムです")
                                     }
@@ -220,7 +222,10 @@ object ItemPage: Page {
                                     addEnchant(Enchantment.DURABILITY, 0)
                                     addItemFlag(ItemFlag.HIDE_ENCHANTS)
                                 }
-                            }).event {
+                            }).event(ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT) {
+                                itemHolder.setArmorItem(armorSlot, null)
+                                updateItemList()
+                            }.event(ClickType.RIGHT, ClickType.LEFT) {
                                 changeArmor.invoke(armorSlot)
                             }
                         }
