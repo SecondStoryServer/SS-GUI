@@ -4,11 +4,16 @@ import me.syari.ss.core.code.StringEditor.toUncolor
 import me.syari.ss.core.inventory.CreateInventory.inventory
 import me.syari.ss.core.inventory.CustomInventory
 import me.syari.ss.core.item.CustomItemStack
+import me.syari.ss.core.message.Message.action
+import me.syari.ss.core.player.UUIDPlayer
 import me.syari.ss.core.scheduler.CustomScheduler.runLater
 import me.syari.ss.gui.Main.Companion.guiPlugin
 import me.syari.ss.item.chest.ItemChest
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
+import me.syari.ss.item.holder.ItemHolder
+import me.syari.ss.item.holder.ItemHolder.Companion.itemHolder
 import me.syari.ss.item.itemRegister.equip.EnhancedEquipItem
+import me.syari.ss.item.itemRegister.equip.armor.EnhancedArmorItem
 import me.syari.ss.item.itemRegister.general.GeneralItemWithAmount
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -150,6 +155,26 @@ object ItemPage: Page {
         }
     }
 
+    private enum class DisplayEquipType {
+        Armor,
+        ExtraWeapon;
+
+        fun next(): DisplayEquipType {
+            return when (this) {
+                Armor -> ExtraWeapon
+                ExtraWeapon -> Armor
+            }
+        }
+    }
+
+    private val displayEquipTypeList = mutableMapOf<UUIDPlayer, DisplayEquipType>()
+
+    private var Player.displayEquipType
+        get() = displayEquipTypeList.getOrDefault(UUIDPlayer(this), DisplayEquipType.Armor)
+        set(value) {
+            displayEquipTypeList[UUIDPlayer(this)] = value
+        }
+
     private data class SelectableEquipItem(val item: EnhancedEquipItem) {
         var isSelected = false
     }
@@ -160,19 +185,75 @@ object ItemPage: Page {
         if (!equipChest.isSorted) equipChest.sort()
         val sortType = equipChest.sortType
         val isReverse = equipChest.isReverse
+        val displayEquipType = player.displayEquipType
         val itemList = equipChest.getList(page)?.map { SelectableEquipItem(it) }
         var confirmDump = false
         var protectDump = false
+        var overrideClickEvent: ((EnhancedEquipItem) -> Unit)? = null
+        var overrideClickEventSlot: ItemHolder.ArmorSlot? = null
         inventory("&9&l装備", 6) {
             fun CustomInventory.updateItemList() {
+                val itemHolder = player.itemHolder
+                when (displayEquipType) {
+                    DisplayEquipType.Armor -> {
+                        val changeArmor = { armorSlot: ItemHolder.ArmorSlot ->
+                            if (overrideClickEventSlot == armorSlot && overrideClickEvent != null) {
+                                overrideClickEvent = null
+                            } else {
+                                overrideClickEventSlot = armorSlot
+                                overrideClickEvent = {
+                                    if (it is EnhancedArmorItem && armorSlot.isAvailable(it.data)) {
+                                        itemHolder.setArmorItem(armorSlot, it)
+                                        overrideClickEvent = null
+                                    } else {
+                                        player.action("&c&l装備できないアイテムです")
+                                    }
+                                }
+                            }
+                        }
+
+                        val emptyArmorSlot = ItemHolder.ArmorSlot.values().toMutableList()
+                        itemHolder.allArmorItem.forEach { (armorSlot, it) ->
+                            emptyArmorSlot.remove(armorSlot)
+                            item(armorSlot.slot, it.itemStack.clone {
+                                if (overrideClickEventSlot == armorSlot) {
+                                    addEnchant(Enchantment.DURABILITY, 0)
+                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                }
+                            }).event {
+                                changeArmor.invoke(armorSlot)
+                            }
+                        }
+                        emptyArmorSlot.forEach { armorSlot ->
+                            val empty = CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "").apply {
+                                if (overrideClickEventSlot == armorSlot) {
+                                    addEnchant(Enchantment.DURABILITY, 0)
+                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                }
+                            }
+                            item(armorSlot.slot, empty).event {
+                                changeArmor.invoke(armorSlot)
+                            }
+                        }
+                    }
+                    DisplayEquipType.ExtraWeapon -> {
+                        itemHolder.extraWeaponItem.forEachIndexed { index, it ->
+                            item(index, it.itemStack)
+                        }
+                    }
+                }
+
                 val selectList = mutableListOf<String>()
                 itemList?.forEachIndexed { index, equipItem ->
-                    item(18 + index, equipItem.item.itemStack.apply {
+                    item(18 + index, equipItem.item.itemStack.clone {
                         if (equipItem.isSelected) {
                             addEnchant(Enchantment.DURABILITY, 0)
                             addItemFlag(ItemFlag.HIDE_ENCHANTS)
                         }
-                    })
+                    }).event {
+                        equipItem.isSelected = true
+                        updateItemList()
+                    }
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
                 item(49, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
@@ -201,7 +282,7 @@ object ItemPage: Page {
                 open(player)
             }
 
-            item(0..4, Material.GRAY_STAINED_GLASS_PANE)
+            item(4, material = Material.GRAY_STAINED_GLASS_PANE)
 
             fun changeSort(changeTo: ItemChest.Equip.SortType) {
                 if (sortType == changeTo) {
@@ -225,7 +306,12 @@ object ItemPage: Page {
                 changeSort(ItemChest.Equip.SortType.Status)
             }
 
-            item(9..17, Material.BLACK_STAINED_GLASS_PANE)
+            item(9, Material.ORANGE_STAINED_GLASS_PANE, "&6装備切り替え").event {
+                player.displayEquipType = displayEquipType.next()
+
+            }
+
+            item(10..17, Material.BLACK_STAINED_GLASS_PANE)
             item(45, Material.LIME_STAINED_GLASS_PANE, "&6<<<").event {
                 openEquipChest(player, equipChest, page - 1)
             }
