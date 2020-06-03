@@ -144,12 +144,12 @@ object ItemPage: Page {
             }
 
             item(9..17, Material.BLACK_STAINED_GLASS_PANE)
-            item(45, Material.ARROW, "&6<<<").event {
+            item(45, Material.LIME_STAINED_GLASS_PANE, "&6<<<").event {
                 openGeneralChest(player, generalChest, page - 1)
             }
             item(46..48, Material.BLACK_STAINED_GLASS_PANE)
             item(50..52, Material.BLACK_STAINED_GLASS_PANE)
-            item(53, Material.ARROW, "&6>>>").event {
+            item(53, Material.LIME_STAINED_GLASS_PANE, "&6>>>").event {
                 openGeneralChest(player, generalChest, page + 1)
             }
             updateItemList()
@@ -408,11 +408,11 @@ object ItemPage: Page {
                 }
                 index++
             }
-            item(45, Material.ARROW, "&6<<<").event {
+            item(45, Material.LIME_STAINED_GLASS_PANE, "&6<<<").event {
                 openCompassChest(player, compassChest, page - 1)
             }
             item(46..52, Material.BLACK_STAINED_GLASS_PANE)
-            item(53, Material.ARROW, "&6>>>").event {
+            item(53, Material.LIME_STAINED_GLASS_PANE, "&6>>>").event {
                 openCompassChest(player, compassChest, page + 1)
             }
             open(player)
