@@ -20,6 +20,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.UUID
 
 class Main: JavaPlugin() {
     companion object {
@@ -79,12 +80,12 @@ class Main: JavaPlugin() {
                     HealPotion.Size.values().forEachIndexed { index, size ->
                         chestData.general.add(HealPotion(size), index * 10 + 5)
                     }
-                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, null, 30))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 100))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 70))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, null, 20))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
+                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 30))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 100))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 70))
+                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 20))
                     chestData.compass.add(compassItem1)
                     chestData.compass.add(compassItem3)
                 }
