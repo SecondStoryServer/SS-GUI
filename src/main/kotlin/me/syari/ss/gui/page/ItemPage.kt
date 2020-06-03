@@ -14,6 +14,7 @@ import me.syari.ss.item.holder.ItemHolder
 import me.syari.ss.item.holder.ItemHolder.Companion.itemHolder
 import me.syari.ss.item.itemRegister.equip.EnhancedEquipItem
 import me.syari.ss.item.itemRegister.equip.armor.EnhancedArmorItem
+import me.syari.ss.item.itemRegister.equip.weapon.EnhancedWeaponItem
 import me.syari.ss.item.itemRegister.general.GeneralItemWithAmount
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -190,18 +191,18 @@ object ItemPage: Page {
         var confirmDump = false
         var protectDump = false
         var overrideClickEvent: ((EnhancedEquipItem) -> Unit)? = null
-        var overrideClickEventSlot: ItemHolder.ArmorSlot? = null
+        var overrideClickEventSlot: Int? = null
         inventory("&9&l装備", 6) {
             fun CustomInventory.updateItemList() {
                 val itemHolder = player.itemHolder
                 when (displayEquipType) {
                     DisplayEquipType.Armor -> {
                         val changeArmor = { armorSlot: ItemHolder.ArmorSlot ->
-                            if (overrideClickEventSlot == armorSlot && overrideClickEvent != null) {
+                            if (overrideClickEventSlot == armorSlot.slot && overrideClickEvent != null) {
                                 overrideClickEvent = null
                                 updateItemList()
                             } else {
-                                overrideClickEventSlot = armorSlot
+                                overrideClickEventSlot = armorSlot.slot
                                 overrideClickEvent = {
                                     if (it is EnhancedArmorItem && armorSlot.isAvailable(it.data)) {
                                         itemHolder.setArmorItem(armorSlot, it)
@@ -218,7 +219,7 @@ object ItemPage: Page {
                         itemHolder.allArmorItem.forEach { (armorSlot, it) ->
                             emptyArmorSlot.remove(armorSlot)
                             item(armorSlot.slot, it.itemStack.clone {
-                                if (overrideClickEventSlot == armorSlot) {
+                                if (overrideClickEventSlot == armorSlot.slot) {
                                     addEnchant(Enchantment.DURABILITY, 0)
                                     addItemFlag(ItemFlag.HIDE_ENCHANTS)
                                 }
@@ -231,7 +232,7 @@ object ItemPage: Page {
                         }
                         emptyArmorSlot.forEach { armorSlot ->
                             val empty = CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "").apply {
-                                if (overrideClickEventSlot == armorSlot) {
+                                if (overrideClickEventSlot == armorSlot.slot) {
                                     addEnchant(Enchantment.DURABILITY, 0)
                                     addItemFlag(ItemFlag.HIDE_ENCHANTS)
                                 }
@@ -242,8 +243,50 @@ object ItemPage: Page {
                         }
                     }
                     DisplayEquipType.ExtraWeapon -> {
-                        itemHolder.extraWeaponItem.forEachIndexed { index, it ->
-                            item(index, it.itemStack)
+                        val changeExtraWeapon = { slot: Int ->
+                            if (overrideClickEventSlot == slot && overrideClickEvent != null) {
+                                overrideClickEvent = null
+                                updateItemList()
+                            } else {
+                                overrideClickEventSlot = slot
+                                overrideClickEvent = {
+                                    if (it is EnhancedWeaponItem) {
+                                        itemHolder.setExtraWeaponItem(slot, it)
+                                        overrideClickEvent = null
+                                        updateItemList()
+                                    } else {
+                                        player.action("&c&l装備できないアイテムです")
+                                    }
+                                }
+                            }
+                        }
+
+                        val extraWeaponItem = itemHolder.allExtraWeaponItem
+                        extraWeaponItem.forEach { (slot, it) ->
+                            item(slot, it.itemStack.apply {
+                                if (overrideClickEventSlot == slot) {
+                                    addEnchant(Enchantment.DURABILITY, 0)
+                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                }
+                            }).event(ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT) {
+                                itemHolder.setExtraWeaponItem(slot, null)
+                                updateItemList()
+                            }.event(ClickType.RIGHT, ClickType.LEFT) {
+                                changeExtraWeapon.invoke(slot)
+                            }
+                        }
+                        val size = extraWeaponItem.size
+                        val emptySlot = size..3
+                        emptySlot.forEach { slot ->
+                            val empty = CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "").apply {
+                                if (overrideClickEventSlot == slot) {
+                                    addEnchant(Enchantment.DURABILITY, 0)
+                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                }
+                            }
+                            item(slot, empty).event {
+                                changeExtraWeapon.invoke(slot)
+                            }
                         }
                     }
                 }
