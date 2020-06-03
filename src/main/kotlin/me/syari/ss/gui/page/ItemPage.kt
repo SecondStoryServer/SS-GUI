@@ -186,7 +186,6 @@ object ItemPage: Page {
         if (!equipChest.isSorted) equipChest.sort()
         val sortType = equipChest.sortType
         val isReverse = equipChest.isReverse
-        val displayEquipType = player.displayEquipType
         val itemList = equipChest.getList(page)?.map { SelectableEquipItem(it) }
         var confirmDump = false
         var protectDump = false
@@ -195,7 +194,7 @@ object ItemPage: Page {
         inventory("&9&l装備", 6) {
             fun CustomInventory.updateItemList() {
                 val itemHolder = player.itemHolder
-                when (displayEquipType) {
+                when (player.displayEquipType) {
                     DisplayEquipType.Armor -> {
                         val changeArmor = { armorSlot: ItemHolder.ArmorSlot ->
                             if (overrideClickEventSlot == armorSlot.slot && overrideClickEvent != null) {
@@ -363,7 +362,7 @@ object ItemPage: Page {
             }
 
             item(9, Material.ORANGE_STAINED_GLASS_PANE, "&6装備切り替え").event {
-                player.displayEquipType = displayEquipType.next()
+                player.displayEquipType = player.displayEquipType.next()
                 updateItemList()
             }
 
