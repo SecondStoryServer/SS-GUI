@@ -231,12 +231,13 @@ object ItemPage: Page {
                             }
                         }
                         emptyArmorSlot.forEach { armorSlot ->
-                            val empty = CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "").apply {
-                                if (overrideClickEventSlot == armorSlot.slot) {
-                                    addEnchant(Enchantment.DURABILITY, 0)
-                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                            val empty =
+                                CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7防具スロット").apply {
+                                    if (overrideClickEventSlot == armorSlot.slot) {
+                                        addEnchant(Enchantment.DURABILITY, 0)
+                                        addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                    }
                                 }
-                            }
                             item(armorSlot.slot, empty).event {
                                 changeArmor.invoke(armorSlot)
                             }
@@ -278,12 +279,13 @@ object ItemPage: Page {
                         val size = extraWeaponItem.size
                         val emptySlot = size..3
                         emptySlot.forEach { slot ->
-                            val empty = CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "").apply {
-                                if (overrideClickEventSlot == slot) {
-                                    addEnchant(Enchantment.DURABILITY, 0)
-                                    addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                            val empty =
+                                CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7武具スロット").apply {
+                                    if (overrideClickEventSlot == slot) {
+                                        addEnchant(Enchantment.DURABILITY, 0)
+                                        addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                    }
                                 }
-                            }
                             item(slot, empty).event {
                                 changeExtraWeapon.invoke(slot)
                             }
