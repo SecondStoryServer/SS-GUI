@@ -313,8 +313,10 @@ object ItemPage: Page {
                     if (protectDump) return@event
                     if (confirmDump) {
                         itemList?.forEach { equipItem ->
-                            equipChest.remove(equipItem.item)
-                            equipItem.isSelected = false
+                            if (equipItem.isSelected) {
+                                equipChest.remove(equipItem.item)
+                                equipItem.isSelected = false
+                            }
                         }
                         openEquipChest(player, equipChest, page)
                     } else {
