@@ -299,8 +299,10 @@ object ItemPage: Page {
                             addItemFlag(ItemFlag.HIDE_ENCHANTS)
                         }
                     }).event {
-                        equipItem.isSelected = true
-                        updateItemList()
+                        overrideClickEvent?.invoke(equipItem.item) ?: {
+                            equipItem.isSelected = true
+                            updateItemList()
+                        }.invoke()
                     }
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
@@ -356,7 +358,7 @@ object ItemPage: Page {
 
             item(9, Material.ORANGE_STAINED_GLASS_PANE, "&6装備切り替え").event {
                 player.displayEquipType = displayEquipType.next()
-
+                updateItemList()
             }
 
             item(10..17, Material.BLACK_STAINED_GLASS_PANE)
