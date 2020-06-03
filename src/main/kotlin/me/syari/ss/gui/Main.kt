@@ -12,6 +12,8 @@ import me.syari.ss.gui.page.ItemPage.openGeneralChest
 import me.syari.ss.item.ItemRarity
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
 import me.syari.ss.item.itemRegister.compass.CompassItem
+import me.syari.ss.item.itemRegister.equip.armor.ArmorItem
+import me.syari.ss.item.itemRegister.equip.armor.EnhancedArmorItem
 import me.syari.ss.item.itemRegister.equip.weapon.EnhancedWeaponItem
 import me.syari.ss.item.itemRegister.equip.weapon.WeaponItem
 import me.syari.ss.item.itemRegister.equip.weapon.WeaponType
@@ -49,17 +51,13 @@ class Main: JavaPlugin() {
         testSword.register()
         val testWand = WeaponItem.create(
             WeaponType.Wand,
-            "test-wand",
-            Material.WOODEN_HOE,
-            "&dtest-wand",
-            "テスト用",
-            ItemRarity.UltraRare,
-            ElementType.Dark,
-            10F,
-            0F,
-            3F
+            "test-wand", Material.WOODEN_HOE, "&dtest-wand", "テスト用", ItemRarity.UltraRare, ElementType.Dark, 10F, 0F, 3F
         )
         testWand.register()
+        val testArmor = ArmorItem(
+            "test-armor", Material.IRON_CHESTPLATE, "&btest-armor", "テスト用", ItemRarity.HighRare, 2F, ElementType.Fire
+        )
+        testArmor.register()
         val nullLocation = Location(null, 0.0, 0.0, 0.0)
         val compassItem1 = CompassItem("compass-1", "コンパス１", nullLocation)
         val compassItem2 = CompassItem("compass-2", "コンパス２", nullLocation)
@@ -67,9 +65,8 @@ class Main: JavaPlugin() {
         compassItem1.register()
         compassItem2.register()
         compassItem3.register()
-        createCommand(this,
-            "test-gui",
-            "SS-GUI-Test",
+        createCommand(
+            this, "test-gui", "SS-GUI-Test",
             tab { _, _ -> element("get-item", "open") },
             tab("open") { _, _ -> element("general", "equip", "compass") }) { sender, args ->
             if (sender !is Player) return@createCommand sendError(ErrorMessage.OnlyPlayer)
@@ -80,14 +77,22 @@ class Main: JavaPlugin() {
                     HealPotion.Size.values().forEachIndexed { index, size ->
                         chestData.general.add(HealPotion(size), index * 10 + 5)
                     }
-                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
-                    chestData.equip.add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 30))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 100))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 70))
-                    chestData.equip.add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 20))
-                    chestData.compass.add(compassItem1)
-                    chestData.compass.add(compassItem3)
+                    chestData.run {
+                        equip.run {
+                            add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
+                            add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 50))
+                            add(EnhancedWeaponItem(testSword, UUID.randomUUID(), 30))
+                            add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 100))
+                            add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 70))
+                            add(EnhancedWeaponItem(testWand, UUID.randomUUID(), 20))
+                            add(EnhancedArmorItem(testArmor, UUID.randomUUID(), 40))
+                            add(EnhancedArmorItem(testArmor, UUID.randomUUID(), 60))
+                        }
+                        compass.run {
+                            add(compassItem1)
+                            add(compassItem3)
+                        }
+                    }
                 }
                 "open" -> {
                     sendWithPrefix("open")
