@@ -300,6 +300,7 @@ object ItemPage: Page {
                         if (isSelected) {
                             addEnchant(Enchantment.DURABILITY, 0)
                             addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                            selectList.add("&7- &a$display")
                         }
                     }).event {
                         overrideClickEvent?.invoke(equipItem.item) ?: {
