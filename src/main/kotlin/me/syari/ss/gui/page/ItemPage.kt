@@ -295,14 +295,15 @@ object ItemPage: Page {
 
                 val selectList = mutableListOf<String>()
                 itemList?.forEachIndexed { index, equipItem ->
+                    val isSelected = equipItem.isSelected
                     item(18 + index, equipItem.item.itemStack.clone {
-                        if (equipItem.isSelected) {
+                        if (isSelected) {
                             addEnchant(Enchantment.DURABILITY, 0)
                             addItemFlag(ItemFlag.HIDE_ENCHANTS)
                         }
                     }).event {
                         overrideClickEvent?.invoke(equipItem.item) ?: {
-                            equipItem.isSelected = true
+                            equipItem.isSelected = !isSelected
                             updateItemList()
                         }.invoke()
                     }
