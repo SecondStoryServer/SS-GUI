@@ -2,11 +2,12 @@ package me.syari.ss.gui.page
 
 import me.syari.ss.core.code.StringEditor.toUncolor
 import me.syari.ss.core.inventory.CreateInventory.inventory
+import me.syari.ss.core.inventory.CreateInventory.isOpenInventory
 import me.syari.ss.core.inventory.CustomInventory
 import me.syari.ss.core.item.CustomItemStack
 import me.syari.ss.core.message.Message.action
 import me.syari.ss.core.player.UUIDPlayer
-import me.syari.ss.core.scheduler.CustomScheduler.runLater
+import me.syari.ss.core.scheduler.CreateScheduler.runLater
 import me.syari.ss.gui.Main.Companion.guiPlugin
 import me.syari.ss.item.chest.ItemChest
 import me.syari.ss.item.chest.PlayerChestData.Companion.chestData
@@ -66,8 +67,8 @@ object ItemPage: Page {
         val itemList = generalChest.getList(page)?.map { SelectableGeneralItem(it) }
         val isReverse = generalChest.isReverse
         var confirmDump = false
-        var protectDump = false
-        inventory("&9&l通常", 6) {
+        val uuidPlayer = UUIDPlayer(player)
+        inventory("&9&l通常", 6, "chest", "general", page.toString()) {
             fun CustomInventory.updateItemList() {
                 val selectList = mutableListOf<String>()
                 itemList?.forEachIndexed { index, generalItem ->
@@ -100,7 +101,6 @@ object ItemPage: Page {
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
                 item(49, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
-                    if (protectDump) return@event
                     if (confirmDump) {
                         itemList?.forEach { generalItem ->
                             generalChest.remove(generalItem.item.data, generalItem.selectCount)
@@ -111,15 +111,11 @@ object ItemPage: Page {
                         confirmDump = true
                         updateItemList()
                         runLater(guiPlugin, 100) {
-                            if (confirmDump) {
+                            if (confirmDump && isOpenInventory(uuidPlayer, this@inventory)) {
                                 confirmDump = false
                                 updateItemList()
                             }
                         }
-                    }
-                    protectDump = true
-                    runLater(guiPlugin, 20) {
-                        protectDump = false
                     }
                 }
                 open(player)
@@ -188,9 +184,9 @@ object ItemPage: Page {
         val isReverse = equipChest.isReverse
         val itemList = equipChest.getList(page)?.map { SelectableEquipItem(it) }
         var confirmDump = false
-        var protectDump = false
         var overrideClickEvent: ((EnhancedEquipItem) -> Unit)? = null
         var overrideClickEventSlot: Int? = null
+        val uuidPlayer = UUIDPlayer(player)
         inventory("&9&l装備", 6) {
             fun CustomInventory.updateItemList() {
                 val itemHolder = player.itemHolder
@@ -310,7 +306,6 @@ object ItemPage: Page {
                 }
                 val dumpMessage = if (confirmDump) "&c本当に捨てますか？" else "&c選択したアイテムを捨てる"
                 item(49, Material.LAVA_BUCKET, dumpMessage, selectList, shine = confirmDump).event {
-                    if (protectDump) return@event
                     if (confirmDump) {
                         itemList?.forEach { equipItem ->
                             if (equipItem.isSelected) {
@@ -323,15 +318,11 @@ object ItemPage: Page {
                         confirmDump = true
                         updateItemList()
                         runLater(guiPlugin, 100) {
-                            if (confirmDump) {
+                            if (confirmDump && isOpenInventory(uuidPlayer, this@inventory)) {
                                 confirmDump = false
                                 updateItemList()
                             }
                         }
-                    }
-                    protectDump = true
-                    runLater(guiPlugin, 20) {
-                        protectDump = false
                     }
                 }
                 open(player)
