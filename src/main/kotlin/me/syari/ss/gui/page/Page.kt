@@ -19,7 +19,10 @@ interface Page {
             private var page: Page = ItemPage
             private var clickEvent = mapOf<Int, () -> Unit>()
 
-            private fun updatePage(player: Player, page: Page) {
+            private fun updatePage(
+                player: Player,
+                page: Page
+            ) {
                 if (this.page == page) return
                 this.page = page
                 updateItem(player)
@@ -29,7 +32,11 @@ interface Page {
                 val clickEvent = mutableMapOf<Int, () -> Unit>()
                 val emptySlot = (0..40).toMutableSet()
 
-                fun setItem(slot: Int, item: CustomItemStack?, event: (() -> Unit)?) {
+                fun setItem(
+                    slot: Int,
+                    item: CustomItemStack?,
+                    event: (() -> Unit)?
+                ) {
                     val itemStack = if (item != null) {
                         if (event != null) {
                             clickEvent[slot] = event

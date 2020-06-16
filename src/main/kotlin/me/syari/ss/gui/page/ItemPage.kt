@@ -59,7 +59,11 @@ object ItemPage: Page {
             }
     }
 
-    /* private */ fun openGeneralChest(player: Player, generalChest: ItemChest.General, page: Int) {
+    /* private */ fun openGeneralChest(
+        player: Player,
+        generalChest: ItemChest.General,
+        page: Int
+    ) {
         val maxPage = generalChest.maxPage
         if (page !in 1..maxPage) return
         if (!generalChest.isSorted) generalChest.sort()
@@ -176,7 +180,11 @@ object ItemPage: Page {
         var isSelected = false
     }
 
-    /* private */ fun openEquipChest(player: Player, equipChest: ItemChest.Equip, page: Int) {
+    /* private */ fun openEquipChest(
+        player: Player,
+        equipChest: ItemChest.Equip,
+        page: Int
+    ) {
         val maxPage = equipChest.maxPage
         if (page !in 1..maxPage) return
         if (!equipChest.isSorted) equipChest.sort()
@@ -227,12 +235,12 @@ object ItemPage: Page {
                         }
                         emptyArmorSlot.forEach { armorSlot ->
                             val empty =
-                                CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7防具スロット").apply {
-                                    if (overrideClickEventSlot == armorSlot.slot) {
-                                        addEnchant(Enchantment.DURABILITY, 0)
-                                        addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                    CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7防具スロット").apply {
+                                        if (overrideClickEventSlot == armorSlot.slot) {
+                                            addEnchant(Enchantment.DURABILITY, 0)
+                                            addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                        }
                                     }
-                                }
                             item(armorSlot.slot, empty).event {
                                 changeArmor.invoke(armorSlot)
                             }
@@ -275,12 +283,12 @@ object ItemPage: Page {
                         val emptySlot = size..3
                         emptySlot.forEach { slot ->
                             val empty =
-                                CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7武具スロット").apply {
-                                    if (overrideClickEventSlot == slot) {
-                                        addEnchant(Enchantment.DURABILITY, 0)
-                                        addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                    CustomItemStack.create(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7武具スロット").apply {
+                                        if (overrideClickEventSlot == slot) {
+                                            addEnchant(Enchantment.DURABILITY, 0)
+                                            addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                        }
                                     }
-                                }
                             item(slot, empty).event {
                                 changeExtraWeapon.invoke(slot)
                             }
@@ -370,7 +378,11 @@ object ItemPage: Page {
         }
     }
 
-    /* private */ fun openCompassChest(player: Player, compassChest: ItemChest.Compass, page: Int) {
+    /* private */ fun openCompassChest(
+        player: Player,
+        compassChest: ItemChest.Compass,
+        page: Int
+    ) {
         val maxPage = compassChest.maxPage
         if (page !in 1..maxPage) return
         val displayMode = compassChest.displayMode
